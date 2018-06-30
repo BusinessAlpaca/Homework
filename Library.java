@@ -4,11 +4,6 @@ public class Library {
 	String address;
 	static String hours = "Libraries are open daily from 9am to 5pm.";
 	Book[] collection = new Book[4];
-	{
-		for (int i = 0; i < collection.length; i++) {
-			collection[i] = new Book("");
-		}
-	}
 
 	public Library(String place) {
 		address = place;
@@ -16,7 +11,7 @@ public class Library {
 
 	public void addBook(Book bk) {
 		for (int i = 0; i < collection.length; i++) {
-			if (collection[i].getTitle().equals("")) {
+			if (collection[i] == null) {
 				collection[i] = bk;
 				break;
 			}
@@ -32,45 +27,49 @@ public class Library {
 	}
 
 	public void borrowBook(String title) {
-		boolean available = false;
+		boolean inColl = false;
 		for (int i = 0; i < collection.length; i++) {
-			if (collection[i].getTitle().equals(title)) {
-				available = true;
+			if (collection[i] != null && collection[i].getTitle().equals(title)) {
 				if (collection[i].isBorrowed()) {
 					System.out.println("Sorry, this book is already borrowed.");
+					inColl = true;
 					break;
 				} else {
 					collection[i].rented();
 					System.out.println("You successfully borrowed " + collection[i].getTitle() + ".");
+					inColl = true;
 					break;
 				}
 			}
 		}
-		if (!available) System.out.println("Sorry, this book is not in our catalog.");
+		if (!inColl)
+			System.out.println("Sorry, this book is not in our catalog.");
 	}
 
 	public void printAvailableBooks() {
-		boolean available = false;
-		for (int i = 0; i < collection.length; i++) {
-			if (!collection[i].isBorrowed() && !collection[i].getTitle().equals("")) {
-				available = true;
-				System.out.println(collection[i].getTitle());
+		if (collection[0] == null)
+			System.out.println("No book in catalog.");
+		else {
+			for (int i = 0; i < collection.length; i++) {
+				if (collection[i] != null && !collection[i].isBorrowed()) {
+					System.out.println(collection[i].getTitle());
+				}
 			}
 		}
-		if (!available) System.out.println("No book in catalog");
 	}
 
 	public void returnBook(String title) {
-		boolean available = false;
+		boolean inColl = false;
 		for (int i = 0; i < collection.length; i++) {
-			if (collection[i].getTitle().equals(title)) {
+			if (collection[i] != null && collection[i].getTitle().equals(title)) {
 				collection[i].returned();
 				System.out.println("You successfully returned " + collection[i].getTitle() + ".");
-				available = true;
+				inColl = true;
 				break;
 			}
 		}
-		if (!available) System.out.println("No book in catalog");
+		if (!inColl)
+			System.out.println("Sorry, this book is not in our catalog.");
 
 	}
 
