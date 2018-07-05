@@ -1,36 +1,34 @@
 
 public class Library {
 
-	// We tend to like adding the access qualifiers wherever possible. "private String address;"
-	String address;
+	private String address;
 	
-	// "openingHours" is more descriptive.
 	// I'm not sure "static" makes sense here. Are you implying that this is true for all libraries and can't be changd? If so - omit the variable and have the "printOpeningHours" method just write this string.
-	static String hours = "Libraries are open daily from 9am to 5pm.";
-	// "collection" is a bad variable name, even though a "library collection" is a thing - in software "collections" are a general term for "things that hols other things". Avoid that word.
-	Book[] collection = new Book[4];
+	//Reply: You're right that it doesn't make sense! It's only this way because the file is a homework excercise, and the homework instructions specify not to write extra methods (the one's I've written just fill in a pre-circulated template) and to use a static variable "where needed"...
+	static String openingHours = "Libraries are open daily from 9am to 5pm.";
+	
+	Book[] holdings = new Book[4];
 
-	// no point in using two different terms. You can take a parameter called "address" and the assignment line can be "this.address = address;"
-	public Library(String place) {
-		address = place;
+	public Library(String address) {
+		this.address = address;
 	}
 
-	// "bk" is a bad name, and "book" is just so close. :)
-	// Also - your "addBook" method takes a Book, and the "borrowBook" takes a title. You need to decide if the Book object is the way you want people to communicate with your Library object, or is it just an internal "support" object.
-	public void addBook(Book bk) {
-		for (int i = 0; i < collection.length; i++) {
-			if (collection[i] == null) {
-				collection[i] = bk;
-				// Use "return" if what you're trying to say is "this method has finished it's work"
-				break;
-			}
+	//Also - your "addBook" method takes a Book, and the "borrowBook" takes a title. You need to decide if the Book object is the way you want people to communicate with your Library object, or is it just an internal "support" object.
+	//Reply: I know. The reason its written this way is that the homework instructions are to write methods that work for the intructor-written tests that you see inside the main method. Thus want a book argument for method, and a string argument for the other...
+	public void addBook(Book book) {
+		if (holdings[holdings.length - 1] != null) System.out.println("Library holdings are full. Book was not added.");
+		for (int i = 0; i < holdings.length; i++) {
+			if (holdings[i] == null) {
+				holdings[i] = book;
+				return;
+			}			
 		}
-		// What if your collection is full and you can't add the book? The method doesn't throw an exception or even returns a boolean value for success...
 	}
 
 	// *Ususally* you'd like to avoid objects doing things "they are not responsible for". A library is good at knowing when it is open, and not so good at deciding how to print things. I would try to have a "getOpeningHours" method, that returns a string.
+	//Reply: Agreed. I explained why I wrote it this way above.
 	public static void printOpeningHours() {
-		System.out.println(hours);
+		System.out.println(openingHours);
 	}
 
 	public void printAddress() {
@@ -38,58 +36,53 @@ public class Library {
 	}
 
 	// I would again try to express the success of the method in the return value. In this case it can be a Book object or null.
-	public void borrowBook(String title) {
-		boolean inColl = false;
-		for (int i = 0; i < collection.length; i++) {
+	// Reply: Would it be equally good if the method just printed out a string saying that it succeeded? (This method is a void method for aforementioned reasons.)
+	public void borrowBook(String title) {		
+		for (int i = 0; i < holdings.length; i++) {
 			// Opt for "title == collection[i].getTitle()". And if relevant - check that "title" is not null or empty at the start of the method.
-			if (collection[i] != null && collection[i].getTitle().equals(title)) {
-				if (collection[i].isBorrowed()) {
+			// Reply: Changed to "==". I would not have even known the .equals method exists unless the MIT instructions explicitly said to use the .equals method here! Will do in future!
+			if (holdings[i] == null) break;
+			if (holdings[i].getTitle() == title) {
+				if (holdings[i].isBorrowed()) {
 					System.out.println("Sorry, this book is already borrowed.");
-					// using "return" instead of "break" would allow you to avoid that state management of "inColl". Also - avoid abbriviabtions when not crucial - "titleFoundInCollection" is a better name.
-					inColl = true;
-					break;
+					return;
 				} else {
 					// Try to name methods with action verbs - "markAsRented" is more telling than "rented" which can mean "isMarkedAsRented?".
-					collection[i].rented();
-					System.out.println("You successfully borrowed " + collection[i].getTitle() + ".");
-					inColl = true;
-					break;
+					// Reply: Will do! :)
+					holdings[i].rented();
+					System.out.println("You successfully borrowed " + holdings[i].getTitle() + ".");
+					return;
 				}
 			}
 		}
-		if (!inColl)
-			System.out.println("Sorry, this book is not in our catalog.");
+		System.out.println("Sorry, this book is not in our catalog.");
 	}
 
-	public void printAvailableBooks() {
-		// If you're keeping to the semantics of "the books collection doesn't have any gaps" - you can use break some loops when you first encounter a null. (ln 39)
-		if (collection[0] == null)
+	public void printAvailableBooks() {			
+		if (holdings[0] == null) {
 			System.out.println("No book in catalog.");
-		// Opt for "return" when you're done with this method, over using "else".
-		else {
-			for (int i = 0; i < collection.length; i++) {
-				if (collection[i] != null && !collection[i].isBorrowed()) {
-					System.out.println(collection[i].getTitle());
-				}
-			}
+			return;
+		}
+		for (int i = 0; i < holdings.length; i++) {
+			if (holdings[i] != null && !holdings[i].isBorrowed()) {
+					System.out.println(holdings[i].getTitle());
+			}		
 		}
 	}
 
-	public void returnBook(String title) {
-		boolean inColl = false;
-		for (int i = 0; i < collection.length; i++) {
-			if (collection[i] != null && collection[i].getTitle().equals(title)) {
-				collection[i].returned();
-				System.out.println("You successfully returned " + collection[i].getTitle() + ".");
-				inColl = true;
-				break;
+	public void returnBook(String title) {		
+		for (int i = 0; i < holdings.length; i++) {
+			if (holdings[i] != null && holdings[i].getTitle().equals(title)) {
+				holdings[i].returned();
+				System.out.println("You successfully returned " + holdings[i].getTitle() + ".");
+				return;
 			}
-		}
-		if (!inColl)
-			System.out.println("Sorry, this book is not in our catalog.");
+		}		
+		System.out.println("Sorry, this book is not in our catalog.");
 	}
 	
 	// Let's discuss testing. I think you're ready. :)
+	// Cool!
 
 	public static void main(String[] args) {
 		// Create two libraries
