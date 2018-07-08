@@ -54,4 +54,35 @@ public class RomanNumerals {
 		System.out.println(RomanToInt(cleanup("mcDlxiV"))); // 1464
 	}
 
+	//consider this:
+	
+	// int FromRoman(string s) {
+	// 	var v = s.ToUpper()
+	// 			 .ToCharArray()
+	// 			 .Select(DigitValue)
+	// 			 .ToArray();
+	// 	var agg = 0;
+	// 	for (int i = 0; i < v.Length - 1; i++) {
+	// 		if (v[i] < v[i+1]) {
+	// 			agg -= v[i];
+	// 		} else {
+	// 			agg += v[i];
+	// 		}
+	// 	}
+	// 	return agg + v.Last();
+	// }
+
+	// int DigitValue(char c) {
+	// 	switch (c) {
+	// 		case 'I': return 1;
+	// 		case 'V': return 5;
+	// 		case 'X': return 10;
+	// 		case 'L': return 50;
+	// 		case 'C': return 100;
+	// 		case 'D': return 500;
+	// 		case 'M': return 1000;
+	// 		default: throw new ArgumentException($"'{c}' is not a valid roman numeral digit");
+	// 	}
+	// }
+
 }
